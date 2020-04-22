@@ -16,7 +16,7 @@ class TransactionsRepository extends Repository<Transaction> {
         where: { type: 'income' },
       })
     ).reduce((incomeAccumulator, transaction) => {
-      return incomeAccumulator + transaction.value;
+      return incomeAccumulator + Number(transaction.value);
     }, 0);
 
     const outcomeBalance = (
@@ -24,7 +24,7 @@ class TransactionsRepository extends Repository<Transaction> {
         where: { type: 'outcome' },
       })
     ).reduce((outcomeAccumulator, transaction) => {
-      return outcomeAccumulator + transaction.value;
+      return outcomeAccumulator + Number(transaction.value);
     }, 0);
 
     const balance = {

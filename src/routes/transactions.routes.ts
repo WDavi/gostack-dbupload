@@ -1,8 +1,6 @@
 import { Router } from 'express';
 import { getCustomRepository } from 'typeorm';
-import { readFileSync, unlink } from 'fs';
 import multer from 'multer';
-import { parse } from 'papaparse';
 
 import uploadConfig from '../config/uploadCSV';
 
@@ -57,23 +55,11 @@ transactionsRouter.post(
   upload.single('file'),
   async (request, response) => {
     const importTransactions = new ImportTransactionsService();
+
     const uploadedCSV = request.file;
-    const fileInSystem = readFileSync(uploadedCSV.path, 'utf8');
-
-    const parsedCSV = parse(fileInSystem, {
-      // complete: result => console.log(result.data),
-      header: true,
-      transform: value => value.trimLeft(),
-      transformHeader: header => header.trimLeft(),
-      skipEmptyLines: true,
-    });
-
-    unlink(uploadedCSV.path, () => {});
-
     const createdTransactions = await importTransactions.execute(
-      parsedCSV.data,
+      uploadedCSV.path,
     );
-    // console.log(parsedCSV.data);
 
     return response.json(createdTransactions);
   },
